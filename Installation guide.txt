@@ -1,0 +1,30 @@
+# Required technologies:
+# Node, Express, Angular, postgres database
+======================
+# You'll also need to ensure that you have a user 'todo' on the postgres database with password 'letmein'.
+# This user needs to have all the create/select table privileges inside of the database.
+======================
+# You'll have to start running these commands into the directory one level up from this current directory
+
+cd node-postgres-todo 
+npm install
+npm install supervisor -g
+npm install pg --save
+
+psql -U postgres -c "CREATE USER todo WITH PASSWORD 'letmein' CREATEDB;"
+psql -U postgres -c "CREATE DATABASE todo;"
+psql -U postgres -c "GRANT CONNECT ON DATABASE todo TO todo;"
+psql -U postgres -c "GRANT ALL ON ALL TABLES IN SCHEMA public TO todo;"
+
+node models/database.js
+
+# Start up the node 
+npm start
+
+# Then on your web browser localhost:3000
+
+# NOTE: Once the node has been started a javascript global variable will be created which
+# will store the most recent list of client account from the database. If the connection to 
+# the database is lost when this service is up, then an error will be printed as an output
+# as well as the stored list of account. This will also happen is something causes the table
+# to become corrupt or is destroyed.
