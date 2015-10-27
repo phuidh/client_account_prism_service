@@ -1,5 +1,5 @@
 var pg = require('pg');
-var connectionString = 'postgres://todo:letmein@localhost:5432/todo';
+var connectionString = 'postgres://ouruser:letmein@localhost:5432/ouruser';
 
 var results = [];
 

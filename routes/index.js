@@ -8,7 +8,6 @@ module.exports = router;
 
 
 var prevResults = [];
-	var results = [];
 
 
 //The home directory call references index.html
@@ -18,17 +17,18 @@ router.get('/', function(req, res, next) {
 
 
 
-//Ensure that we can connect to the database with the desired username/password
-var connectionString = process.env.DATABASE_URL || 'postgres://todo:letmein@localhost:5432/todo';
 
 
 
 //Build the /client_account package which returns a JSON list of client_accounts or an error message
 router.get('/client_account', function(req, res) {
 
-
 	//Initialise the variables
 	var dbSuccess = "TRUE";
+	var results = [];
+
+	//Ensure that we can connect to the database with the desired username/password
+	var connectionString = process.env.DATABASE_URL || 'postgres://ouruser:letmein@localhost:5432/ouruser';
 
 	// Attempt to connect to the referenced database
 	pg.connect(connectionString, function(err, client, done) {
@@ -37,7 +37,7 @@ router.get('/client_account', function(req, res) {
         	if(err) {
 
 			// If something goes wrong with the connection then it'll print the last list it compiled
-			prevResults.push({"account_name":"ERROR - database connection failure"});				
+			prevResults.push({"warning":"*** ERROR - cannot connect to the database with the provided connection string. ***"});				
 			return res.json(prevResults);
 
           		console.log(err);
@@ -52,7 +52,8 @@ router.get('/client_account', function(req, res) {
 			if (err) {
 
 				// If something goes wrong with the table then return the last available list
-				prevResults.push({"account_name":"ERROR - table failure"});				
+				// Testing shows that this doesn't work if the HTML webpage is refreshed (due to all the scripts being rerun and the global variables being reset)
+				prevResults.push({"warning":"*** ERROR - cannot query the client_account table. ***"});				
 				return res.json(prevResults);
 
             			dbSuccess="FALSE";
@@ -82,7 +83,7 @@ router.get('/client_account', function(req, res) {
 
   			prevResults = results;
 
- 
+
        			// Once the client list has been completed push the results array back to the original server request
         		query.on('end', function() {
 

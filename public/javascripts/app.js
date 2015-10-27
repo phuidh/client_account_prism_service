@@ -1,21 +1,21 @@
-angular.module('nodeTodo', [])
+angular.module('nodeAccount', [])
 
 .controller('mainController', function($scope, $http) {
 
     $scope.formData = {};
-    $scope.todoData = {};
+    $scope.toData = {};
 
     var attrValue="";
 
-    // Get all todos
+    // Get all accounts
     $http.get('/client_account')
         .success(function(data) {
             $scope.fromData = {};
-            $scope.todoData = data;
+            $scope.toData = data;
             console.log(data);
         })
         .error(function(error) {
-	    $scope.todoData = '[{"account_name":"ERROR"}]';
+	    $scope.toData = '[{"account_name":"ERROR - unable to reach /client_account"}]';
             console.log('Error: ' + error);
        });
 });
