@@ -4,6 +4,7 @@ var express = require('express');
 var router = express.Router();
 var pg = require('pg');
 var path = require('path');
+var cors = require('cors');
 module.exports = router;
 
 
@@ -18,10 +19,11 @@ router.get('/', function(req, res, next) {
 
 
 
+// Build the /client_account package which returns a JSON list of client_accounts or an error message
+// The cors() argument here should allow connections to be made to another server. 
+// If you want cors to only work for a specific server you can do cors("http://server-b/") instead
+router.get('/client_account', cors(), function(req, res) {
 
-
-//Build the /client_account package which returns a JSON list of client_accounts or an error message
-router.get('/client_account', function(req, res) {
 
 	//Initialise the variables
 	var dbSuccess = "TRUE";
@@ -53,6 +55,7 @@ router.get('/client_account', function(req, res) {
 
 				// If something goes wrong with the table then return the last available list
 				// Testing shows that this doesn't work if the HTML webpage is refreshed (due to all the scripts being rerun and the global variables being reset)
+				// Send out a warning to print at the bottom of the page
 				prevResults.push({"warning":"*** ERROR - cannot query the client_account table. ***"});				
 				return res.json(prevResults);
 
@@ -71,8 +74,10 @@ router.get('/client_account', function(req, res) {
 		// If everything works then return a client account list
 		if (dbSuccess == "TRUE") {
 
+			// Empty out the results JSON before filling it in again
  			results = [];
    	 	
+
 			// For each item returned push the data into the results array list
        			query.on('row', function( row) {
 		
@@ -80,7 +85,9 @@ router.get('/client_account', function(req, res) {
  
         		});
 
-
+			// Pushing the current results to a global variable 
+			// This is an attempt to be able to recall the last available list if a list cannot be retrieved (connection error)
+			// Sadly I haven't been able to get this working yet because a page refresh clears out the prevResults
   			prevResults = results;
 
 

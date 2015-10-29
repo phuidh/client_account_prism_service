@@ -1,3 +1,4 @@
+// Angular module is referenced in index.html
 angular.module('nodeAccount', [])
 
 .controller('mainController', function($scope, $http) {
@@ -7,7 +8,7 @@ angular.module('nodeAccount', [])
 
     var attrValue="";
 
-    // Get all accounts
+    // Pull all the information pulled from the /client_account service and send it through to index.html for processing (listing)
     $http.get('/client_account')
         .success(function(data) {
             $scope.fromData = {};
@@ -15,7 +16,7 @@ angular.module('nodeAccount', [])
             console.log(data);
         })
         .error(function(error) {
-	    $scope.toData = '[{"account_name":"ERROR - unable to reach /client_account"}]';
+	    $scope.toData = '[{"warning":"ERROR - unable to reach /client_account"}]';
             console.log('Error: ' + error);
        });
 });
